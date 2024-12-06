@@ -4,7 +4,11 @@ main().catch((err) => console.log(err));
 
 async function main() {
   await mongoose.connect(
-    "mongodb+srv://lijiththazhathethil:4mx12uEQzSOmHpe4@cluster0.7vvl4.mongodb.net/"
+    process.env.MONGODB_URL||"mongodb+srv://lijiththazhathethil:4mx12uEQzSOmHpe4@cluster0.7vvl4.mongodb.net/",{
+      useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 30000 // Increase timeout to 30 seconds
+    }
   );
   console.log('connected db');
 }

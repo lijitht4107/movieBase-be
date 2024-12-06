@@ -6,7 +6,7 @@ const movieScehma = new mongoose.Schema({
     director:String,
     writer:String,
     star:String,
-    rating:Number
+    // rating:Number
 });
-const Post = mongoose.model("movies",movieScehma)
-export default Post;
+const Movie = mongoose.model("movies",movieScehma)
+export default Movie;

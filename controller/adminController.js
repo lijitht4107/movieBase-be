@@ -1,4 +1,5 @@
-import Post from '../models/movieModel.js'
+import Movie from '../models/movieModel.js'
+import Rating from '../models/ratingModel.js';
 
 const AddMovie = async(req,res)=>{
 try {
@@ -15,11 +16,11 @@ try {
     if(!postData){
        return res.send('post data not clear')
     }
-    var post = new Post(postData)
-    await post.save()
-    post.imageUrl =`https://localhost:3001/uploads ${post.id}`
-    await post.save()
-    res.status(201).json(postData)
+    var movie = new Movie(postData)
+    await movie.save()
+    movie.imageUrl =`https://localhost:3001/uploads ${movie.id}`
+    await movie.save()
+    res.status(201).json({message:"movie added"})
 
 } catch (error) {
     console.log(error);
@@ -29,7 +30,7 @@ try {
 const GetMovies = async(req,res)=>{
 
     try {
-        const posts = await Post.find()
+        const posts = await Movie.find()
         if(!posts){
             return res.status(401).json({message:"posts not get"})
         }
@@ -43,20 +44,24 @@ const GetMovies = async(req,res)=>{
 const OnMovie =async(req,res)=>{
     try {
         const id = req.params.id;
-        console.log("pppppppppppp",id);
+        console.log("movie id: ",id);
         
         if(!id){
             return res.status(401).json({message:"movie id get"})
 
         }
-        const theMovie = await Post.findById(req.params.id)
-        if(!theMovie){
+        const movie = await Movie.findById(req.params.id);
+       const ratings = await Rating.find({ movieId: req.params.id });
+     
+        if(!movie){
             return res.status(401).json({message:"movie not get"})
+        }else{
+            res.json({ movie, ratings });
         }
-        res.status(200).json(theMovie)
+        
     } catch (error) {
         console.log(error);
-        res.status(500).json({error:"internal server error"})
+        res.status(500).json({ error: "An error occurred" });
     }
 }
 
@@ -66,7 +71,7 @@ const EditMovie=async(req,res)=>{
         if(!id){
            return  res.status(401).json({message:"file id not get"})
         }
-        const post = await Post.findByIdAndUpdate(id,req.body,{new:true})
+        const post = await Movie.findByIdAndUpdate(id,req.body,{new:true})
         res.status(200).json(post)
     } catch (error) {
         console.log(error);
@@ -79,7 +84,7 @@ const DeleteMovie=async(req,res)=>{
         if(!id){
            return  res.status(401).json({message:"file id not get"})
         }
-        const post = await Post.findByIdAndDelete(id)
+        const post = await Movie.findByIdAndDelete(id)
         res.status(200).json({message:"post deleted"})
     } catch (error) {
         console.log(error);

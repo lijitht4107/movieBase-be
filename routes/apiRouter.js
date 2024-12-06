@@ -1,9 +1,11 @@
 import express from 'express'
-import { rating } from '../controller/ratingController.js'
+import { AddRating } from '../controller/ratingController.js'
 
 const apiRouter = express.Router()
 
-apiRouter.post('/rating',rating)
+apiRouter.post('/ratings/:movieId',AddRating)
+
+
 
 
 export default apiRouter

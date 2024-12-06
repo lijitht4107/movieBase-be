@@ -30,30 +30,34 @@ const SignUp = async (req, res) => {
     res.status(500).json({ error: "internals server error" });
   }
 };
-const Login = async(req,res)=>{
-    try {
-        const {email, password}=req.body;
-        const user = await User.findOne({email:email})
-        if(!user){
-           return res.status(401).json({message:"email not valied"})
-        }
-        const isValied= await bcrypt.compare(password,user.password);
-        if(!isValied){
-            return res.status(401).json({message:"password is not correct"})
+const Login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email: email });
 
-        }
-        console.log('User Details', user, '\n')
-        let payload ={email:email,user:user.name,role:user.role};
-        let token = jwt.sign(
-            payload,
-            process.env.SECRET_KEY,
-            { expiresIn: '1h' });
-        console.log('Token', token, '\n')
-        res.status(201).json({message:"login successfull", token:token})
-    } catch (error) {
-            console.log(error);
-            res.status(500).json({ error: "internals server error" });
+    if (!user) {
+      return res.status(401).json({ message: "Email not valid" });
     }
-}
+
+    const isValid = await bcrypt.compare(password, user.password);
+    if (!isValid) {
+      return res.status(401).json({ message: "Password is not correct" });
+    }
+
+    console.log("User Details", user, "\n");
+
+    let payload = { email: email, user: user.name, role: user.role ,userId:user._id };
+    let token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "1h" });
+
+    // Set cookies and then send the JSON response
+    res.cookie("token", token, { httpOnly: true, secure: true });
+    res.cookie("name", user.name);
+    user.password = undefined;
+    res.status(201).json({ message: "Login successful", token: token, user: user });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 
 export { SignUp,Login };

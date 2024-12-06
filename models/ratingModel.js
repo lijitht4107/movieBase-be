@@ -1,9 +1,24 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
-const raingSchema = new mongoose.Schema({
-    movieId :String,
-    rating:Number
+const ratingSchema = new mongoose.Schema({
+  movieId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Movie',
+    required: true
+  },
+  //movie name!!!!!
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  rating: {
+    type: Number,
+    required: true,
+    min: 0,
+    max: 10
+  }
 });
-
-const Rating = mongoose.model("ratings",raingSchema);
-export default Rating
+//ratings - name is named befor store
+const Rating = mongoose.model('Ratings', ratingSchema);
+export default Rating;
